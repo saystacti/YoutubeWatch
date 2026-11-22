@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 import AVKit
 
 private let defaultInstance = "https://inv.nadeko.net"
@@ -55,8 +56,10 @@ final class YouTubeModel: ObservableObject {
 
         do {
             var components = URLComponents(string: instance + "/api/v1/search")!
-            components.queryItems = [URLQueryItem(name: "q", value: term),
-                                     URLQueryItem(name: "type", value: "video")]
+            components.queryItems = [
+                URLQueryItem(name: "q", value: term),
+                URLQueryItem(name: "type", value: "video")
+            ]
             var request = URLRequest(url: components.url!)
             request.timeoutInterval = 20
             request.setValue("YouTubeWatch/1.0", forHTTPHeaderField: "User-Agent")
@@ -115,7 +118,6 @@ struct ContentView: View {
 
                 HStack(spacing: 5) {
                     TextField("Search videos", text: $model.query)
-                        .textFieldStyle(.roundedBorder)
                     Button {
                         Task { await model.search() }
                     } label: {
@@ -135,22 +137,24 @@ struct ContentView: View {
                         .foregroundColor(.secondary)
                 }
 
-                List(model.results) { video in
-                    Button {
-                        Task {
-                            await model.play(video)
-                            if model.player != nil { showingPlayer = true }
-                        }
-                    } label: {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(video.title)
-                                .font(.system(size: 13, weight: .semibold))
-                                .lineLimit(2)
-                            if let author = video.author {
-                                Text(author)
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
+                List {
+                    ForEach(model.results) { video in
+                        Button {
+                            Task {
+                                await model.play(video)
+                                if model.player != nil { showingPlayer = true }
+                            }
+                        } label: {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(video.title)
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .lineLimit(2)
+                                if let author = video.author {
+                                    Text(author)
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(1)
+                                }
                             }
                         }
                     }
@@ -205,6 +209,12 @@ struct PlayerScreen: View {
                 }
             }
         }
-        .padding(8)
+        .padding(.horizontal, 4)
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
     }
 }
