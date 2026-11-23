@@ -13,6 +13,7 @@ targets:
       - path: YouTubeWatchApp.swift
     settings:
       base:
+        GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.example.youtubewatch.watchkitapp
         INFOPLIST_KEY_CFBundleDisplayName: YouTubeWatch
         INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.example.youtubewatch
